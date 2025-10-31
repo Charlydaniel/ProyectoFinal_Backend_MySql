@@ -1,0 +1,106 @@
+import Users from "../models/user.model.js";
+import pool from "../config/MySql.config.js";
+import { Query } from "mongoose";
+
+const USSER_TABLE = {
+    NAME: 'usuarios',
+    COLUMNS: {
+        ID: 'id',
+        USER_NAME: 'username',
+        IMAGE: 'imagen_avatar',
+        CREATION_DATE: 'fecha_creacion',
+        UPDATE_DATE: 'fecha_modificacion',
+        EMAIL: 'email',
+        PASSWORD: 'password',
+        ACTIVE: 'activo',
+        VERIFIED:'verificado'
+    }
+
+}
+
+class userRepository {
+    //Los metodos estaticos se guardan en la clase y pueden ser instanciados dentro de la misma clase,
+    // Sin necesidad de instanciar la clase. Algo similar a una función.
+    //No es necesario hacer new userRepository()
+    //Se usa Static para no tener mas de una instancia, ya que no necesitamos que se instancie mas de una 
+    //vez en este caso particular.
+
+    static async createUser(name, email, password) {
+
+        // El simbolo ? se utiliza para evita la inyección SQL, es decir que alguien mande 
+        // un query adentro de una variabl. Es mas seguro hacerlo con el excecute:
+        // Ej: static async createUser(name,email='or drop table usuarios',password) --> permitiria eliminar la tabla usuarios
+
+        const query = `INSERT INTO  ${USSER_TABLE.NAME}(
+                                    ${USSER_TABLE.COLUMNS.USER_NAME},
+                                    ${USSER_TABLE.COLUMNS.EMAIL},
+                                    ${USSER_TABLE.COLUMNS.PASSWORD},
+                                    ${USSER_TABLE.COLUMNS.ACTIVE}
+                                    ) VALUES (?,?,?,1)`                                  
+        const [insert_data,fieldPacket]= await pool.execute(query, [name, email, password])
+        const search_id=insert_data.insertId
+
+        const user_created=await userRepository.getById(search_id)
+        return user_created
+    }
+    static async getAll() {
+     /*    //Uso find para buscar todo
+        const users = Users.find() */
+        /* return users */
+
+        const query=`SELECT * FROM ${USSER_TABLE.NAME}`
+        const [result,fieldPacket]=await pool.execute(query)
+        const user_found=result
+
+        if(!user_found){
+            return null
+        }
+        else{
+            return user_found
+        }
+    }
+    static async deleteBiId(user_id) {
+        await Users.findByIdAndDelete(user_id)
+        return true
+    }
+    static async getById(user_id) {
+        
+        const query=`SELECT * FROM ${USSER_TABLE.NAME} WHERE ${USSER_TABLE.COLUMNS.ID} = ?`
+        const [result,fieldPacket]=await pool.execute(query,[user_id])
+        const user_found=result[0]
+        
+
+        if(!user_found){
+            return null
+        }
+        else{
+            return user_found
+        }
+
+    }
+    static async updateById(user_id, new_values) {
+
+        const columns=Object.keys(new_values)
+        const SetClause= columns.map(col=>`${col}=?`).join(', ')
+        const query=`UPDATE ${USSER_TABLE.NAME} SET ${SetClause}
+                        WHERE ID=?`
+        const values= [... Object.values(new_values),user_id]
+        const [update_data,field_pack] =await pool.execute(query,values)
+
+        return update_data.affectedRows
+        
+    }
+    static async getByEmail(email) {
+    
+        const query = `SELECT * FROM ${USSER_TABLE.NAME} 
+                            WHERE ${USSER_TABLE.COLUMNS.EMAIL}=?
+                            AND ${USSER_TABLE.COLUMNS.ACTIVE}=1`
+                            
+        const [result] = await pool.execute(query, [email])
+        return result[0]
+    }
+
+
+}
+
+export default userRepository

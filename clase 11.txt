@@ -1,0 +1,51 @@
+LIBRERIA PARA CONECTAR MONGODB CON NODEJS
+MONGOOSE
+
+https://mongoosejs.com/docs/index.html
+
+INSTALAR MONGOOSE
+
+npm install mongoose
+
+CONFIGURARLA
+
+SE AGREGARAN LAS DEPENDENCIAS, PARA IGNORARLAS CREAR el archivo .GITIGNORE y poner adentro node_modlues
+
+
+mongodb+srv://admin:<db_password>@cluster0.gwkmtvf.mongodb.net/
+
+LOS VALORES DE CONEXION SE GUARDAN EN .env (crear este archivo y obviarlo en el .gitignore para que no suba al repo)
+INSTALAR
+npm install dotenv
+PARA QUE SE TOME EL DATO QUE PONEMOS EN .ENV (ENVIRONMENT)
+
+
+MONGOOSE FUNCIONA POR ESQUEMAS.
+MongoDB tiene colexiones que son como carpetas de archivos json
+Los esquemas se hacen del lado del código --> Establece los contratos
+
+EJ:
+
+import mongoose, { Types } from "mongoose";
+
+const userSchema= new mongoose.Schema(
+    {
+        name: {type: String,
+                required:true
+                },
+        email: {type: String,
+                unique:true,
+                required:true
+                },
+        password:{type: String,
+                    required:true
+                },
+        created_at: {Type: Date,
+                        default: new Date
+                    },
+        active: {type: Boolean,
+                default: true
+                }
+
+    }
+)

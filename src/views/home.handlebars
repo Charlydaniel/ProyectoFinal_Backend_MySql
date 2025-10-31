@@ -1,0 +1,13 @@
+<h1>Hola desde Handlebars home</h1>
+<h2>Tu nombre es: {{name}}</h2>
+
+<h1 style= "color: #84314a" >Tus Workspaces son</h1>
+{{#each workspaces}}
+    <li>{{this.name}}</li>
+    <a href="/workspace/{{_id}}">Ir al espacio de trabajo</a>
+{{/each}}
+{{#if is_admin}}
+    <button>Borrar proyecto</button>
+    {{else}}
+    <button disabled>Borrar proyecto</button>
+{{/if}}
