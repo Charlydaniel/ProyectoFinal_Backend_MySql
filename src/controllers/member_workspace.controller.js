@@ -298,7 +298,43 @@ class memberWorkspaceController {
             }
         }
     }
+    static async getMembersByWorkspaceId(request,response){
 
+    try{
+    
+        const {workspace_id}=request.body
+        
+        if(workspace_id){
+             const members=await MemberWokspaceRepository.getMembersByWorkspaceId(workspace_id)
+        
+             return response.status(201).json(
+
+                {
+                    ok:true,
+                    status:201,
+                    message:"Miembros encontrados",
+                    members:members.length,
+                    data:members
+                }
+             )
+        }
+        else{
+            throw new serverError(400,'Workspace enviado vacío')
+        }
+    }
+       catch(error){
+        return response.status(400).json
+        (
+            {
+                ok:false,
+                message:"Error interno del servidor: " + error,
+                status:400    
+             }
+        )
+       } 
+
+
+    }
     }
 
 export default memberWorkspaceController

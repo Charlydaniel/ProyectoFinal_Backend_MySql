@@ -96,18 +96,21 @@ class workspaceController {
 
     }
     static async getAll(request, response) {
-
+        
         try{
             
             const workspaces = await workspacesRepository.getAll()
-            
+
             if(!workspaces){
                 throw new serverError(404,'No se encontraron workspaces')
             }
 
-            response.json(
+           return response.status(201).json(
                 {
-                    workspaces: workspaces
+                    status:201,
+                    message:`Workspaces encontrados del usuario: ${request.user.email}`,
+                    ok:true,
+                    data: workspaces
                 }
             )
         }
@@ -187,7 +190,7 @@ class workspaceController {
         }
 
     }
-        static async getByName(request, response) {
+    static async getByName(request, response) {
 
         const workspace_name = request.params.workspace_name
 

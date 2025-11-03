@@ -7,7 +7,7 @@ const auth_router= express.Router()
 //ENDPOINTS:
 
 auth_router.post('/register', AuthController.register)
-auth_router.put('/login',AuthController.login)
+auth_router.post('/login',AuthController.login)
 auth_router.get('/verify-email/:verification_token',AuthController.verifyEmail)
 
 export default auth_router

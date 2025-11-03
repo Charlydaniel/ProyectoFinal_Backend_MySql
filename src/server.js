@@ -134,7 +134,6 @@ app.use('/api/users',user_router)
 app.use('/api/auth',auth_router) 
 app.use('/api/workspace_member',member_routes)
 
-
 /* app.use('/api/status',(request,response)=>{
     response.send(
         {

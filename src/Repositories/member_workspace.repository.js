@@ -64,5 +64,18 @@ class MemberWokspaceRepository {
                 return result.insertId
                 
     }
+    static async getMembersByWorkspaceId(workspace_id){
+
+        const query=`SELECT * FROM workspaces 
+                    INNER JOIN  ${MEMBERS_TABLE.NAME}  
+                        ON ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=workspaces.id
+                    INNER JOIN usuarios
+                        ON ${MEMBERS_TABLE.COLUMNS.FK_USER}=usuarios.id
+                        WHERE ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=?`
+
+        const [result] =await  pool.execute(query,[workspace_id])
+        return result
+
+    }
 }
 export default MemberWokspaceRepository

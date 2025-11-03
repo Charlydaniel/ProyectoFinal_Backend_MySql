@@ -26,7 +26,6 @@ export function authMidleware (request, response, next) {
                 
                 const user_data= jwt.verify(auth_token,ENVIRONMENT.JWT_SECRET_KEY)
                     request.user=user_data
-    
                     next()
             
             }

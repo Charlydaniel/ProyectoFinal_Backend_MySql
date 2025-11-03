@@ -221,6 +221,16 @@ class User_controller {
             }
         }
     }
+    static async getUserSession(request,response){
+        
+        return response.status(201).json(
+                    {
+                        ok:true,
+                        message:'Se envio usuario',
+                        user:request.user
+                    }
+                )
+    }
 
 }
 export default User_controller

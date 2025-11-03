@@ -86,25 +86,6 @@ class AuthController {
         }
 
     }
-
-    //Como hacer establecimiento de contraseña:
-    // GET /api/auth/forgot-password:user_email
-    //Validar que el email pertenezca a un usuario.
-    //Crear un token con el user_id
-    //Enviar un mail al usuario con el link de reestablecimiento. En este link tendra el token creado.
-    //http://url_frontend.com/reset-password/:reset_token
-    //Del lado del frontend hay que hacer un formulario que te solicite la nueva contraseña.
-    //Debe enviar la contraseña nueva como el reset token.
-    //POST /api/auth/reset-password/:reset_token
-    /*Por: body:{
-                new password
-                }
-                -Validar token.
-                -Encriptar nueva contraseña.
-                -Actualizar la contraseña en la DB
-                 */
-
-
     static async login(request, response) {
         
         try {
@@ -137,7 +118,8 @@ class AuthController {
                     message: 'Loguin exitoso',
                     status: 200,
                     data: {
-                        authorization_token: authorization_token
+                        authorization_token: authorization_token,
+                        user:request.user
                     }
                 }
             )
