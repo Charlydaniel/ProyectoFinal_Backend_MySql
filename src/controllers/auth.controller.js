@@ -147,7 +147,7 @@ class AuthController {
         try {
             const { verification_token } = request.params
 
-            console.log(Request.params)
+            console.log(request.params)
             const usr_updated = await AuthService.verifyEmail(verification_token)
 
         if(usr_updated){
