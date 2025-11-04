@@ -50,7 +50,7 @@ class MemberWokspaceRepository {
     }
     static async create(user_id, workspace_id, role = 'user') {
 
-                const query=`INSERT INTO ${MEMBERS_TABLE.NAME}
+            const query=`INSERT INTO ${MEMBERS_TABLE.NAME}
                 (
                     ${MEMBERS_TABLE.COLUMNS.FK_USER},
                     ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE},
