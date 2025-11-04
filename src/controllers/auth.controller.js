@@ -11,7 +11,7 @@ class AuthController {
 
         const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         const password_length = 8
-
+        
         try {
             const {
                 email,
