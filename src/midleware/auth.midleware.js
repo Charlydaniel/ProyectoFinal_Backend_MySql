@@ -4,9 +4,6 @@ import jwt from 'jsonwebtoken'
 
 
 export function authMidleware (request, response, next) {
-    //El token de autorizacion se suele pasar por Header.
-    //Especificamente por el header autorization
-    //Formato esperado: 'Bearer token_value'
 
     try {
    
@@ -29,16 +26,11 @@ export function authMidleware (request, response, next) {
                     next()
             
             }
-       
 
-        //Guardamos los datos del token en la request.
-        //Para que otros controladores puedan acceder a quien es el usuario
-        //ESTAMOS HACIENDO UNA SESION.
-     
     }
     catch (error) {
         if(error instanceof jwt.JsonWebTokenError){
-            return response.stat(401).json(
+            return response.status(401).json(
                 {
                     ok:false,
                     status:401,
@@ -47,7 +39,7 @@ export function authMidleware (request, response, next) {
             )
         }
           if(error instanceof jwt.TokenExpiredError){
-            return response.stat(401).json(
+            return response.status(401).json(
                 {
                     ok:false,
                     status:401,
