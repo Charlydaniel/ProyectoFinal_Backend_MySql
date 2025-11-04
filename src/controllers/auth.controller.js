@@ -147,17 +147,19 @@ class AuthController {
         try {
             const { verification_token } = request.params
 
-            console.log(request.params)
             const usr_updated = await AuthService.verifyEmail(verification_token)
 
         if(usr_updated){
-            
+            console.log(usr_updated)
             return response.json(
                 {
                     ok: true,
                     status: 200,
                     message: 'Usuario validado ok',
-                    user_id:usr_updated.id
+                    user_id:usr_updated.id,
+                    user_name:usr_updated.username,
+                    user_email:usr_updated.email
+                    
                 }
             )
         }

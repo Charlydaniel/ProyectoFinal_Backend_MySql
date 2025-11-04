@@ -87,7 +87,11 @@ class userRepository {
         const values= [... Object.values(new_values),user_id]
         const [update_data,field_pack] =await pool.execute(query,values)
 
-        return update_data.affectedRows
+    if (update_data.affectedRows === 0) return null
+
+        const [rows] = await pool.execute(`SELECT * FROM ${USSER_TABLE.NAME} WHERE ID=?`, [user_id]);
+        
+        return rows[0];
         
     }
     static async getByEmail(email) {
