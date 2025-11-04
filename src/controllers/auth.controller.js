@@ -91,7 +91,7 @@ class AuthController {
         try {
 
             const { email, password } = request.body
-
+        
             const user_found = await userRepository.getByEmail(email) 
                     
             if(user_found){
@@ -100,10 +100,9 @@ class AuthController {
             if(user_found.verificado === 0){
                 throw new serverError(401, 'Email no verificado')
             }
-
-                if (!is_same_password) {
-                    throw new serverError(401, 'Usuario o contraseña incorrecta')
-                }
+            if (!is_same_password) {
+                throw new serverError(401, 'Usuario o contraseña incorrecta')
+            }
             }
             else{
                 throw new serverError(400, 'Usuario o contraseña incorrecta')

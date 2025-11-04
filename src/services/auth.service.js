@@ -135,7 +135,7 @@ class AuthService {
 
         userRepository.updateById(user_found.id,{ ultima_sesion: fechaMySQL })
             
-            return authorization_token
+        return authorization_token
     }
 }
 
