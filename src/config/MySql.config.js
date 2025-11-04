@@ -9,16 +9,16 @@ const pool = mysql.createPool({
     user:ENVIRONMENT.MYSQL_USERNAME,
     password:ENVIRONMENT.MYSQL_PASSWORD,
     database:ENVIRONMENT.MYSQL_DATABASE,
-    waitForConnections: true,  // ✅ espera si no hay conexión libre
-    connectionLimit: 5,        // ✅ respeta el límite de Clever Cloud
-    queueLimit: 0,             // ✅ sin límite de cola
-    enableKeepAlive: true,     // ✅ mantiene activas las conexiones
+    waitForConnections: true,  
+    connectionLimit: 5,    
+    queueLimit: 0,             
+    enableKeepAlive: true,    
     keepAliveInitialDelay: 0
 })
 
 pool.getConnection().then((conection)=>{
     console.log('Conexion exitosa a la base de datos')
-    connection.release();
+    conection.release();
 })
 .catch((err)=>{
 

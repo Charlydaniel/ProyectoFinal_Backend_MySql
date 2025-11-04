@@ -19,11 +19,7 @@ const USSER_TABLE = {
 }
 
 class userRepository {
-    //Los metodos estaticos se guardan en la clase y pueden ser instanciados dentro de la misma clase,
-    // Sin necesidad de instanciar la clase. Algo similar a una función.
-    //No es necesario hacer new userRepository()
-    //Se usa Static para no tener mas de una instancia, ya que no necesitamos que se instancie mas de una 
-    //vez en este caso particular.
+
 
     static async createUser(name, email, password) {
 
@@ -44,9 +40,7 @@ class userRepository {
         return user_created
     }
     static async getAll() {
-     /*    //Uso find para buscar todo
-        const users = Users.find() */
-        /* return users */
+
 
         const query=`SELECT * FROM ${USSER_TABLE.NAME}`
         const [result,fieldPacket]=await pool.execute(query)
