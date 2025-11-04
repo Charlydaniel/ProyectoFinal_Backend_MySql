@@ -23,21 +23,26 @@ class userRepository {
 
     static async createUser(name, email, password) {
 
-        // El simbolo ? se utiliza para evita la inyección SQL, es decir que alguien mande 
-        // un query adentro de una variabl. Es mas seguro hacerlo con el excecute:
-        // Ej: static async createUser(name,email='or drop table usuarios',password) --> permitiria eliminar la tabla usuarios
 
         const query = `INSERT INTO  ${USSER_TABLE.NAME}(
                                     ${USSER_TABLE.COLUMNS.USER_NAME},
                                     ${USSER_TABLE.COLUMNS.EMAIL},
                                     ${USSER_TABLE.COLUMNS.PASSWORD},
                                     ${USSER_TABLE.COLUMNS.ACTIVE}
-                                    ) VALUES (?,?,?,1)`                                  
-        const [insert_data,fieldPacket]= await pool.execute(query, [name, email, password])
-        const search_id=insert_data.insertId
+                                    ) VALUES (?,?,?,1)`   
+            
+            const connection = await pool.getConnection();
+                try {
+                    const [insert_data,fieldPacket]= await pool.execute(query, [name, email, password])
+                    const search_id=insert_data.insertId
+                    const user_created=await userRepository.getById(search_id)
+                    return user_created
+                } finally {
+                connection.release();
+                }                              
+        
 
-        const user_created=await userRepository.getById(search_id)
-        return user_created
+
     }
     static async getAll() {
 
@@ -93,9 +98,16 @@ class userRepository {
         const query = `SELECT * FROM ${USSER_TABLE.NAME} 
                             WHERE ${USSER_TABLE.COLUMNS.EMAIL}=?
                             AND ${USSER_TABLE.COLUMNS.ACTIVE}=1`
-                            
-        const [result] = await pool.execute(query, [email])
-        return result[0]
+        
+    const connection = await pool.getConnection();
+        
+        try {
+                const [result] = await pool.execute(query, [email])
+                return result[0]
+        } finally {
+        connection.release();
+        }       
+
     }
 
 

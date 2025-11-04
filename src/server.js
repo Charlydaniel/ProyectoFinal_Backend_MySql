@@ -7,7 +7,7 @@ import { engine } from 'express-handlebars'
 import workspacesRepository from './Repositories/workspaces.repository.js'
 import auth_router from './routes/auth.router.js'
 import cors from 'cors'
-import pool from './config/MySql.config.js'
+
 
 
 const app=express()
@@ -65,14 +65,4 @@ app.use('/api/users',user_router)
 app.use('/api/auth',auth_router) 
 app.use('/api/workspace_member',member_routes)
 
-process.on('SIGINT', async () => {
-  await pool.end();
-  console.log('Pool cerrado correctamente');
-  process.exit(0);
-});
 
-process.on('SIGTERM', async () => {
-  await pool.end();
-  console.log('Pool cerrado correctamente');
-  process.exit(0);
-});
