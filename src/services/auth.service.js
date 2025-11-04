@@ -87,7 +87,7 @@ class AuthService {
                 />
                 <h1>Bienvenido a Slack</h1>
                 <p>Este es un mail de verificación</p>
-                <a href='${ENVIRONMENT.URL_API_BACKEND}/api/auth/verify-email/${verification_token}'>
+                <a href='${ENVIRONMENT.URL_FRONTEND}/api/auth/verify-email/${verification_token}'>
                     Click aquí para verificar tu cuenta
                 </a>
                 </div>
