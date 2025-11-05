@@ -11,6 +11,7 @@ member_routes.get('/:workspace_id/member_workspace',authMidleware,workspacemidle
 member_routes.post('/:workspace_id/invite',authMidleware,workspacemidleware(['admin']),memberWorkspaceController.inviteMember)
 member_routes.get('/confirm-invitation/:verification_token',memberWorkspaceController.confirmInvitation)
 member_routes.post('/get_by_workspaces/get_members',authMidleware,memberWorkspaceController.getMembersByWorkspaceId)
+member_routes.post('/get_by_member/get_workspaces',authMidleware,memberWorkspaceController.getWorkspacesByMemberId)
 
 export default member_routes
 

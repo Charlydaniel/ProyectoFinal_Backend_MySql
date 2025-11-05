@@ -12,6 +12,35 @@ const MEMBERS_TABLE={
             CREATION_DATE:'fecha_creacion'
         }
 }
+const WORKSPACE_TABLE={
+        NAME:'workspaces',
+        COLUMNS:
+        {
+                ID:'id',
+                NAME:'nombre',
+                DESCRIPTION:'descripcion',
+                IMG:'img_workspace',
+                CREATED_DATE:'fecha_creacion',
+                UPDATED_DATE:'fecha_modificacion',
+                ACTIVE:'activo'
+        }
+}
+
+const USSER_TABLE = {
+    NAME: 'usuarios',
+    COLUMNS: {
+        ID: 'id',
+        USER_NAME: 'username',
+        IMAGE: 'imagen_avatar',
+        CREATION_DATE: 'fecha_creacion',
+        UPDATE_DATE: 'fecha_modificacion',
+        EMAIL: 'email',
+        PASSWORD: 'password',
+        ACTIVE: 'activo',
+        VERIFIED:'verificado'
+    }
+
+}
 
 class MemberWokspaceRepository {
 
@@ -63,6 +92,19 @@ class MemberWokspaceRepository {
                 
                 return result.insertId
                 
+    }
+    static async getWorkspacesByMemberId(member_id){
+
+        const query=`
+            SELECT * FROM ${WORKSPACE_TABLE.NAME} 
+            LEFT JOIN ${MEMBERS_TABLE.NAME}  
+              ON ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=
+                 ${WORKSPACE_TABLE.NAME}.${WORKSPACE_TABLE.COLUMNS.ID}
+                        WHERE ${MEMBERS_TABLE.COLUMNS.FK_USER}=?`
+                        
+        const [result]  =await  pool.execute(query,[member_id])
+        return result
+
     }
     static async getMembersByWorkspaceId(workspace_id){
 

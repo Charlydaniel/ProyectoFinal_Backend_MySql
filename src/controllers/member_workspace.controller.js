@@ -34,7 +34,7 @@ class memberWorkspaceController {
             response.redirect(`${ENVIRONMENT.URL_FRONTEND}/login`)
         }
         catch (error) {
-            console.log(error)
+
             if(error instanceof jwt.JsonWebTokenError) {
                 response.status(400).json({ ok: false, status: 400, message: 'Token invalido' })
             }
@@ -334,6 +334,61 @@ class memberWorkspaceController {
        } 
 
 
+    }
+    static async getWorkspacesByMemberId(request,response){
+
+        try{
+        
+        const {member_id} =request.body
+
+        if(member_id){
+            
+        const workspaces= await MemberWokspaceRepository.getWorkspacesByMemberId(member_id)
+    
+            if(workspaces){
+
+            return response.status(201).json(
+                    {
+                        ok:true,
+                        status:201,
+                        message:"Workspaces encontrados",
+                        workspaces:workspaces.length,
+                        data:workspaces
+                    }
+                )
+            }
+            return response.status(201).json(
+                    {
+                        ok:true,
+                        status:201,
+                        message:"Usuario sin Workspaces",
+                        workspaces:workspaces.length,
+                        data:workspaces
+                    }
+                )
+        }
+        else{
+            throw new serverError(400,`Se esperaba recibir un miembro: Miembro nulo`)
+            }
+        }
+        catch(error){
+            if(error.status){
+                return response.status(error.status).json(
+                    {
+                        ok:false,
+                        message:error.message
+                    }
+                )
+            }
+            else{
+                return response.status(500).json(
+                    {
+                        ok:false,
+                        message:'Error interno del servidor al obtener el workspace para el miembro' +error
+                    }
+                )
+            }
+        } 
     }
     }
 
