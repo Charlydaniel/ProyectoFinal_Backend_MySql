@@ -68,7 +68,6 @@ class workspacesRepository {
                 
                 const [result]=await pool.execute(query,[name,url_image,descripcion])
 
-                console.log(result)
                 return result.insertId
     
         }

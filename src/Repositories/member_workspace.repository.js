@@ -26,7 +26,7 @@ const WORKSPACE_TABLE={
         }
 }
 
-const USSER_TABLE = {
+const USER_TABLE = {
     NAME: 'usuarios',
     COLUMNS: {
         ID: 'id',
@@ -95,28 +95,45 @@ class MemberWokspaceRepository {
     }
     static async getWorkspacesByMemberId(member_id){
 
-        const query=`
-            SELECT * FROM ${WORKSPACE_TABLE.NAME} 
-            LEFT JOIN ${MEMBERS_TABLE.NAME}  
-              ON ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=
-                 ${WORKSPACE_TABLE.NAME}.${WORKSPACE_TABLE.COLUMNS.ID}
-                        WHERE ${MEMBERS_TABLE.COLUMNS.FK_USER}=?`
-                        
-        const [result]  =await  pool.execute(query,[member_id])
-        return result
+        try{
+                const query=`
+                    SELECT ${WORKSPACE_TABLE.NAME}.* FROM ${WORKSPACE_TABLE.NAME} 
+                    LEFT JOIN ${MEMBERS_TABLE.NAME}  
+                    ON ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=
+                        ${WORKSPACE_TABLE.NAME}.${WORKSPACE_TABLE.COLUMNS.ID}
+                                WHERE ${MEMBERS_TABLE.COLUMNS.FK_USER}=?`
+                                
+                const [result]  = await pool.execute(query,[member_id])
+
+                return result
+        }
+        catch(err){
+            console.log(err)
+        }
+
 
     }
     static async getMembersByWorkspaceId(workspace_id){
 
-        const query=`SELECT * FROM workspaces 
+        try{
+
+                const query=`SELECT * FROM ${WORKSPACE_TABLE.NAME} 
                     INNER JOIN  ${MEMBERS_TABLE.NAME}  
-                        ON ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=workspaces.id
-                    INNER JOIN usuarios
-                        ON ${MEMBERS_TABLE.COLUMNS.FK_USER}=usuarios.id
+                        ON ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=${WORKSPACE_TABLE.NAME}.${WORKSPACE_TABLE.COLUMNS.ID}
+                    INNER JOIN ${USER_TABLE.NAME}
+                        ON ${MEMBERS_TABLE.COLUMNS.FK_USER}=${USER_TABLE.NAME}.${USER_TABLE.COLUMNS.ID}
                         WHERE ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=?`
 
-        const [result] =await  pool.execute(query,[workspace_id])
+                const [result] =await pool.execute(query,[workspace_id])
+
+        
         return result
+        }
+        catch(error){
+            console.log(error)
+        }
+
+
 
     }
 }

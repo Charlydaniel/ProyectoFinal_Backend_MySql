@@ -303,10 +303,12 @@ class memberWorkspaceController {
     try{
     
         const {workspace_id}=request.body
-        
+  
         if(workspace_id){
-             const members=await MemberWokspaceRepository.getMembersByWorkspaceId(workspace_id)
+             
+            const members=await MemberWokspaceRepository.getMembersByWorkspaceId(workspace_id)
         
+             console.log(members)
              return response.status(201).json(
 
                 {
@@ -339,13 +341,15 @@ class memberWorkspaceController {
 
         try{
         
-        const {member_id} =request.body
+            const member_id =request.user.id
+  
 
         if(member_id){
             
         const workspaces= await MemberWokspaceRepository.getWorkspacesByMemberId(member_id)
     
-            if(workspaces){
+
+            if(workspaces && !isNaN(workspaces)){
 
             return response.status(201).json(
                     {

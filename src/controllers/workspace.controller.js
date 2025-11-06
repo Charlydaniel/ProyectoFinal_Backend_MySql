@@ -138,6 +138,7 @@ class workspaceController {
 
         const workspace_id = request.params.workspace_id
         
+        console.warn(request.params)
         try {
             if (!isNaN(workspace_id)) {
 
