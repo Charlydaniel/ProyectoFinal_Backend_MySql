@@ -11,16 +11,17 @@ function  workspaceMidleware(valid_member_roles=[]){
         try{
 
             const {workspace_id} = request.params
-    
             const workspace_found = await workspacesRepository.getById(workspace_id)
-
+            
             if(!workspace_found){
                 throw new serverError(404,'Workspace no encontrado')
+
             }
             const user=  request.user
             const member_user_data = await MemberWokspaceRepository.
             getMemberWorkspaceByUserIdAndWorkspaceId(user.id,workspace_id)
-    
+            
+          
             if(!member_user_data){
                 throw new serverError(403,'Usuario sin autorización')
             }
