@@ -4,26 +4,25 @@ import serverError from "../utils/customError.utils.js"
 import workspacesRepository from "../Repositories/workspaces.repository.js"
 import MemberWokspaceRepository from "../Repositories/member_workspace.repository.js"
 import memberWorkspaceController from "./member_workspace.controller.js"
+import inviteService from "../services/Invite.service.js"
 
 
 
 class workspaceController {
 
-    static async post(request, response) {
+    static async post(request,response) {
 
         const name = request.body.name
         const url_image = request.body.image
-        const members=request.body.members
 
-        console.log(name , url_image , members)
+
+        console.log(name , url_image )
         let msg = 'Nombre de Workspace invalido: '
         let ok = false
         let status = 201
         const ok_message = 'Workspace creado'
 
-        console.log('EN EL POST CREATE WP: Nombre:'
-           ,name,'imagen: ',url_image,'Miembros:', members
-        )
+
         try {
             if (typeof (name) !== 'string' || typeof (url_image) !== 'string') {
                 msg = msg + 'Tipo de dato incorrecto para el workspace'
@@ -65,21 +64,14 @@ class workspaceController {
                 }
                 status = 201
                 ok = true
-                console.log('EL USUARIO ACTUAL ES: ', request.user.id)
-            const invite= await memberWorkspaceController.
-            inviteUserNewWorkspace(members,workspace_id_created,request.user.id)
-
-            console.log('INVITE:',invite )
-/* 
-            if(!invite.ok){
-                throw new serverError(400,"Error al invitar a los miembros: ", invite.message)
-            } */
+              
 
                 return response.status(status).json(
                     {
                         ok: ok,
                         status: status,
-                        message: msg
+                        message: msg,
+                        workspace_id:workspace_id_created
                     }
                 )
             }

@@ -11,6 +11,7 @@ export default async function inviteService(user,invited_email,workspace_id_crea
     )
     
     const workspace= await workspaceController.getById(workspace_id_created)
+    
     const nombre_workspace=workspace.nombre
 
                 if(user){

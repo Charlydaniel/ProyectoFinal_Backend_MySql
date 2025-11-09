@@ -111,6 +111,7 @@ class AuthController {
             /*Validar que el email y la password sean validos */
             const authorization_token  = await AuthService.login(user_found)
             
+            console.log(user_found)
             return response.json(
                 {
                     ok: true,
@@ -118,8 +119,9 @@ class AuthController {
                     status: 200,
                     data: {
                         authorization_token: authorization_token,
-                        user:request.user
-                    }
+                        user:request.user,
+                        email:user_found.email
+                    },
                 }
             )
         }
