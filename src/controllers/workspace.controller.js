@@ -2,50 +2,55 @@
 
 import serverError from "../utils/customError.utils.js"
 import workspacesRepository from "../Repositories/workspaces.repository.js"
-import userRepository from "../Repositories/user.repository.js"
 import MemberWokspaceRepository from "../Repositories/member_workspace.repository.js"
-import transporter from "../config/mailer.config.js"
-import ENVIRONMENT from "../config/environment.config.js"
+import memberWorkspaceController from "./member_workspace.controller.js"
+
 
 
 class workspaceController {
 
     static async post(request, response) {
-        //request.body es un objeto donde estará la carga útil enviada por el cliente:
-        //Si aplicamos express.json a nuestro body va a estar llegando con el body siempre un objeto
-        const name = request.body.name
-        const url_image = request.body.url_image
-        const description=request.body.description
 
+        const name = request.body.name
+        const url_image = request.body.image
+        const members=request.body.members
+
+        console.log(name , url_image , members)
         let msg = 'Nombre de Workspace invalido: '
         let ok = false
         let status = 201
         const ok_message = 'Workspace creado'
 
+        console.log('EN EL POST CREATE WP: Nombre:'
+           ,name,'imagen: ',url_image,'Miembros:', members
+        )
         try {
-            if (typeof (name) !== 'string' || typeof(description)!='string') {
+            if (typeof (name) !== 'string' || typeof (url_image) !== 'string') {
                 msg = msg + 'Tipo de dato incorrecto para el workspace'
                 status = 400
                 throw new serverError(status, msg)
             }
-            else if (!name || !url_image || !description) {
+            else if (!name || !url_image) {
                 msg = msg + 'Debe completar toda la informacion para poder crear un workspace'
                 status = 400
                 throw new serverError(status, msg)
             }
-            else if (name.length > 30) {
-                msg = msg + 'No puede superar los 30 caracteres'
+            else if (name.length > 30 || name.length < 5) {
+                msg = msg + 'Nombre debe tener entre 5 y 30 caracteres'
                 status = 400
                 throw new serverError(status, msg)
             }
+            /*   
+                //En este caso se permite creacion 
+                //de Workspaces repetidos ya que Salck lo permite tambien        
             else if (await workspacesRepository.getByName(name)) {
                 msg = msg + 'El workspace ya existe: No se puede crear un workspace repetido'
                 status = 400
                 throw new serverError(status, msg)
-            }
+            } */
             else {
                 msg = ok_message
-                const workspace_id_created=await workspacesRepository.createWorkspace(name, url_image,description)
+                const workspace_id_created=await workspacesRepository.createWorkspace(name,url_image)
                 
                 if(!workspace_id_created){
                     throw new serverError(
@@ -60,6 +65,15 @@ class workspaceController {
                 }
                 status = 201
                 ok = true
+                console.log('EL USUARIO ACTUAL ES: ', request.user.id)
+            const invite= await memberWorkspaceController.
+            inviteUserNewWorkspace(members,workspace_id_created,request.user.id)
+
+            console.log('INVITE:',invite )
+/* 
+            if(!invite.ok){
+                throw new serverError(400,"Error al invitar a los miembros: ", invite.message)
+            } */
 
                 return response.status(status).json(
                     {
@@ -72,7 +86,6 @@ class workspaceController {
         }
         catch (error) {
 
-            //Evaluamos si es un error que nosotros definimos
             if (error.status) {
                 return response.status(error.status).json(
                     {
@@ -138,7 +151,6 @@ class workspaceController {
 
         const workspace_id = request.params.workspace_id
         
-        console.warn(request.params)
         try {
             if (!isNaN(workspace_id)) {
 

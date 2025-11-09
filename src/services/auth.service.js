@@ -26,7 +26,7 @@ class AuthService {
 
 
         const to_email=email
-        const from_email='utntestmaildev@gmail.com'
+        const from_email=ENVIRONMENT.GMAIL_USERNAME
 
         await transporter.sendMail({
         from: to_email,

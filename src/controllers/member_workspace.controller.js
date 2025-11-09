@@ -3,6 +3,7 @@ import transporter from "../config/mailer.config.js"
 import MemberWokspaceRepository from "../Repositories/member_workspace.repository.js"
 import userRepository from "../Repositories/user.repository.js"
 import workspacesRepository from "../Repositories/workspaces.repository.js"
+import inviteService from "../services/Invite.service.js"
 import serverError from "../utils/customError.utils.js"
 import jwt from 'jsonwebtoken'
 
@@ -25,7 +26,7 @@ class memberWorkspaceController {
                     id_inviter
                     } = jwt.verify(token, ENVIRONMENT.JWT_SECRET_KEY)
 
-         
+    
             const member_created =await MemberWokspaceRepository.create(id_invited, id_workspace, 'user')
                 
             if(!member_created){
@@ -56,8 +57,6 @@ class memberWorkspaceController {
             const user_id=request.body.user_id
             const {workspace_id} = request.params
 
-            //En caso de crearse dede el agregado de miembros será user.
-            //En caso de estar creandose un nuevo Workspace el usuario de la sesión será admin
             const user_rol = (rol)=>{
                 if(user_id===request.user.id){
                     return USER_PROFILE.admin
@@ -220,17 +219,15 @@ class memberWorkspaceController {
     static async inviteMember(request,response){
 
         try {
-            //Datos del middleware:
             const { member, workspace, user } = request
             const  invited_email = request.body.email
             
-            //Buscar al usuario y validar que exista y este activo
+            
             const user_invited = await userRepository.getByEmail(invited_email)
 
             if (!user_invited) {
                 throw new serverError(404, 'Usuario no encontrado')
             }
-            //Verificar que NO es miembro actual de ese workspace 
             const member_data = await MemberWokspaceRepository.getMemberWorkspaceByUserIdAndWorkspaceId(
                 user_invited.id, workspace.id
             )
@@ -253,18 +250,75 @@ class memberWorkspaceController {
                 }
             )
 
-            //Enviar mail de invitacion al usuario invitado
             await transporter.sendMail(
                 {
                     from: ENVIRONMENT.GMAIL_USERNAME,
                     to: invited_email,
-                    subject: 'Invitacion al workspace',
-                    html: `<h1>El usuario: ${user.email} te ha enviado una invitación
-                            al workspace ${workspace.nombre}<h1/>
+                    subject: `Invitacion al workspace ${workspace.nombre}`,
+                    html:
+                    
+                `<html>
+            <head>
+                <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 20px;
+                }
+                .container {
+                    background: #ffffff;
+                    border-radius: 10px;
+                    padding: 30px;
+                    max-width: 500px;
+                    margin: 0 auto;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                    text-align: center;
+                }
+                .logo {
+                    width: 80px;
+                    height: auto;
+                    margin-bottom: 20px;
+                }
+                h1 {
+                    color: #2b6cb0;
+                    margin-bottom: 10px;
+                }
+                p {
+                    color: #333;
+                    font-size: 16px;
+                }
+                a {
+                    display: inline-block;
+                    background-color: #2b6cb0;
+                    color: #fff !important;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                    text-decoration: none;
+                    margin-top: 20px;
+                }
+                a:hover {
+                    background-color: #1a4d8f;
+                }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                <img 
+                    src="https://a.slack-edge.com/bv1-13/slack_logo-ebd02d1.svg" 
+                    alt="Slack Logo" 
+                    class="logo"
+                />
+                <h1>Bienvenido a Slack</h1>
+                <p>El usuario: ${user.email} te ha enviado una invitación
+                            al workspace ${workspace.nombre}</p>
                             <a href='${ENVIRONMENT.URL_API_BACKEND}/api/workspace_member/confirm-invitation/${invite_token}'>
                                 Click para aceptar
                             <a/>
-                            `
+                </div>
+            </body>
+            </html>
+                    `
                 }
             )
 
@@ -277,7 +331,7 @@ class memberWorkspaceController {
 
         }
         catch (error) {
-            //Evaluamos si es un error que nosotros definimos
+
             if (error.status) {
                 return response.status(error.status).json(
                     {
@@ -305,11 +359,10 @@ class memberWorkspaceController {
         const {workspace_id}=request.body
   
         if(workspace_id){
-             
+
             const members=await MemberWokspaceRepository.getMembersByWorkspaceId(workspace_id)
         
-             console.log(members)
-             return response.status(201).json(
+            return response.status(201).json(
 
                 {
                     ok:true,
@@ -393,6 +446,24 @@ class memberWorkspaceController {
                 )
             }
         } 
+    }
+    static async inviteUserNewWorkspace(members,workspace_id_created, inviter_id) {
+
+        try {
+        
+        console.log('EN EL POST INVITE: Nombre:'
+           ,workspace_id_created,'Invitador: ',inviter_id,'Miembros:', members
+        )
+        for (const invited_email of members) {
+
+                const user = await userRepository.getByEmail(invited_email);
+
+                inviteService(user,invited_email,workspace_id_created,inviter_id)
+            }
+
+        } catch (error) {
+            console.error("Error al enviar invitaciones:", error);
+        }
     }
     }
 

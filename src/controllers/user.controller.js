@@ -103,7 +103,6 @@ class User_controller {
                 throw new serverError(status, msg)
             }
 
-            //-----------------------------
             if (status === 201) {
 
                 if (!password) {
@@ -123,9 +122,6 @@ class User_controller {
                 }
             }
 
-
-
-            //-------------------------
             if (status === 201) {
                 if (!email) {
                     msg = msg + "Email incorrecto, debe completar email"

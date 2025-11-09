@@ -149,7 +149,6 @@ class AuthController {
             const usr_updated = await AuthService.verifyEmail(verification_token)
 
         if(usr_updated){
-            console.log(usr_updated)
             return response.json(
                 {
                     ok: true,
