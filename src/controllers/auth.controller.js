@@ -108,10 +108,8 @@ class AuthController {
                 throw new serverError(400, 'Usuario o contraseña incorrecta')
             }
             
-            /*Validar que el email y la password sean validos */
             const authorization_token  = await AuthService.login(user_found)
             
-            console.log(user_found)
             return response.json(
                 {
                     ok: true,

@@ -6,6 +6,7 @@ import workspacesRepository from "../Repositories/workspaces.repository.js"
 import inviteService from "../services/Invite.service.js"
 import serverError from "../utils/customError.utils.js"
 import jwt from 'jsonwebtoken'
+import workspaceController from "./workspace.controller.js"
 
 const USER_PROFILE = {
     admin: 'admin',
@@ -218,9 +219,10 @@ class memberWorkspaceController {
     }
     static async inviteMember(request, response) {
 
-        try {
-            const { members, workspace, user } = request
 
+        try {
+            const { members, workspace_id } = request.body
+            const user = request.user
             for (const member of members) {
 
                 const user_invited = await userRepository.getByEmail(member)
@@ -231,91 +233,137 @@ class memberWorkspaceController {
                     await transporter.sendMail(
                         {
                             from: ENVIRONMENT.GMAIL_USERNAME,
-                            to: invited_email,
+                            to: member,
                             subject: `Invitacion Slack`,
                             html:
 
-                                `<html>
-                <head>
-                    <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        background-color: #f4f4f4;
-                        margin: 0;
-                        padding: 20px;
-                    }
-                    .container {
-                        background: #ffffff;
-                        border-radius: 10px;
-                        padding: 30px;
-                        max-width: 500px;
-                        margin: 0 auto;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                        text-align: center;
-                    }
-                    .logo {
-                        width: 80px;
-                        height: auto;
-                        margin-bottom: 20px;
-                    }
-                    h1 {
-                        color: #2b6cb0;
-                        margin-bottom: 10px;
-                    }
-                    p {
-                        color: #333;
-                        font-size: 16px;
-                    }
-                    a {
-                        display: inline-block;
-                        background-color: #2b6cb0;
-                        color: #fff !important;
-                        padding: 10px 20px;
-                        border-radius: 5px;
-                        text-decoration: none;
-                        margin-top: 20px;
-                    }
-                    a:hover {
-                        background-color: #1a4d8f;
-                    }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                    <img 
-                        src="https://a.slack-edge.com/bv1-13/slack_logo-ebd02d1.svg" 
-                        alt="Slack Logo" 
-                        class="logo"
-                    />
-                    <h1>Bienvenido a Slack</h1>
-                    <p>El usuario: ${user.email} te ha enviado a formar parte de Slack</p>
-                                <a href='${ENVIRONMENT.URL_API_BACKEND}/register'>
-                                    Click para empezar
-                                <a/>
-                    </div>
-                </body>
-                </html>
-                        `
+                            `
+                            <html>
+                                <head>
+                                    <meta charset="UTF-8" />
+                                    <title>Invitación a Slack</title>
+                                    <style>
+                                    /* Estilos seguros para clientes de correo */
+                                    body {
+                                        font-family: Arial, sans-serif;
+                                        background-color: #f7f9fc;
+                                        margin: 0;
+                                        padding: 0;
+                                    }
+
+                                    .wrapper {
+                                        width: 100%;
+                                        background-color: #f7f9fc;
+                                        padding: 40px 0;
+                                    }
+
+                                    .container {
+                                        background-color: #ffffff;
+                                        border-radius: 12px;
+                                        max-width: 520px;
+                                        margin: 0 auto;
+                                        padding: 40px 30px;
+                                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                                        text-align: center;
+                                    }
+
+                                    .logo {
+                                        width: 100px;
+                                        margin-bottom: 25px;
+                                    }
+
+                                    h1 {
+                                        color: #2b6cb0;
+                                        font-size: 22px;
+                                        margin-bottom: 12px;
+                                    }
+
+                                    p {
+                                        color: #444;
+                                        font-size: 15px;
+                                        line-height: 1.6;
+                                        margin: 0 auto 20px;
+                                        max-width: 400px;
+                                    }
+
+                                    .button {
+                                        display: inline-block;
+                                        background-color: #2b6cb0;
+                                        color: #ffffff !important;
+                                        text-decoration: none;
+                                        padding: 12px 24px;
+                                        border-radius: 6px;
+                                        font-weight: bold;
+                                        transition: background-color 0.3s ease;
+                                    }
+
+                                    .button:hover {
+                                        background-color: #1a4d8f;
+                                    }
+
+                                    .footer {
+                                        margin-top: 30px;
+                                        font-size: 13px;
+                                        color: #777;
+                                    }
+                                    </style>
+                                </head>
+                                <body>
+                                    <div class="wrapper">
+                                    <div class="container">
+                                        <img
+                                        src="https://a.slack-edge.com/bv1-13/slack_logo-ebd02d1.svg"
+                                        alt="Slack Logo"
+                                        class="logo"
+                                        />
+                                        <h1>¡Bienvenido a Slack!</h1>
+                                        <p>
+                                        El usuario <strong>${user.email}</strong> te ha invitado a formar parte del
+                                        espacio de trabajo en Slack.
+                                        </p>
+
+                                        <a
+                                        href="${ENVIRONMENT.URL_API_BACKEND}/register"
+                                        class="button"
+                                        target="_blank"
+                                        >
+                                        Unirme ahora
+                                        </a>
+
+                                        <div class="footer">
+                                        Si no esperabas este correo, podés ignorarlo con seguridad.
+                                        </div>
+                                    </div>
+                                    </div>
+                                </body>
+                                </html>
+
+                            `
                         }
                     )
                 }
-
                 else {
-                    const member_data = await MemberWokspaceRepository.getMemberWorkspaceByUserIdAndWorkspaceId(
-                        user_invited.id, workspace.id
+
+                    const member_data = await 
+                    MemberWokspaceRepository.getMemberWorkspaceByUserIdAndWorkspaceId(
+                    user_invited.id, workspace_id
                     )
-                    if (member_data) {
-                        throw new serverError(409, `Usuario con email ${invited_email} ya es miembro del workspace`)
+
+                    const workspace_data = workspacesRepository.getById(workspace_id)
+
+
+                    if(!workspace_data){
+                        throw new serverError(400,`Workspace no encontrado, no se puede enviar la invitación ${workspace_id}`)
                     }
 
-                    const id_inviter = member.id
+                    if (!member_data) {
 
                     const invite_token = jwt.sign(
                         {
                             id_invited: user_invited.id,
-                            email_invited: invited_email,
-                            id_workspace: workspace.id,
-                            id_inviter: id_inviter
+                            email_invited: user_invited.email,
+                            id_workspace:workspace_id,
+                            id_inviter: user.id
                         },
                         ENVIRONMENT.JWT_SECRET_KEY,
                         {
@@ -326,75 +374,121 @@ class memberWorkspaceController {
                     await transporter.sendMail(
                         {
                             from: ENVIRONMENT.GMAIL_USERNAME,
-                            to: invited_email,
-                            subject: `Invitacion al workspace ${workspace.nombre}`,
+                            to: user_invited.email,
+                            subject: `Invitacion al workspace ${workspace_data.nombre}`,
                             html:
 
-                                `<html>
-                <head>
-                    <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        background-color: #f4f4f4;
-                        margin: 0;
-                        padding: 20px;
-                    }
-                    .container {
-                        background: #ffffff;
-                        border-radius: 10px;
-                        padding: 30px;
-                        max-width: 500px;
-                        margin: 0 auto;
-                        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                        text-align: center;
-                    }
-                    .logo {
-                        width: 80px;
-                        height: auto;
-                        margin-bottom: 20px;
-                    }
-                    h1 {
-                        color: #2b6cb0;
-                        margin-bottom: 10px;
-                    }
-                    p {
-                        color: #333;
-                        font-size: 16px;
-                    }
-                    a {
-                        display: inline-block;
-                        background-color: #2b6cb0;
-                        color: #fff !important;
-                        padding: 10px 20px;
-                        border-radius: 5px;
-                        text-decoration: none;
-                        margin-top: 20px;
-                    }
-                    a:hover {
-                        background-color: #1a4d8f;
-                    }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                    <img 
-                        src="https://a.slack-edge.com/bv1-13/slack_logo-ebd02d1.svg" 
-                        alt="Slack Logo" 
-                        class="logo"
-                    />
-                    <h1>Bienvenido a Slack</h1>
-                    <p>El usuario: ${user.email} te ha enviado una invitación
-                                al workspace ${workspace.nombre}</p>
-                                <a href='${ENVIRONMENT.URL_API_BACKEND}/api/workspace_member/confirm-invitation/${invite_token}'>
-                                    Click para aceptar
-                                <a/>
-                    </div>
-                </body>
-                </html>
-                        `
+                            `
+                            <html>
+                                <head>
+                                    <meta charset="UTF-8" />
+                                    <title>Invitación al Workspace</title>
+                                    <style>
+                                    body {
+                                        font-family: Arial, sans-serif;
+                                        background-color: #f7f9fc;
+                                        margin: 0;
+                                        padding: 0;
+                                    }
+
+                                    .wrapper {
+                                        width: 100%;
+                                        background-color: #f7f9fc;
+                                        padding: 40px 0;
+                                    }
+
+                                    .container {
+                                        background-color: #ffffff;
+                                        border-radius: 12px;
+                                        max-width: 520px;
+                                        margin: 0 auto;
+                                        padding: 40px 30px;
+                                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                                        text-align: center;
+                                    }
+
+                                    .logo {
+                                        width: 100px;
+                                        margin-bottom: 25px;
+                                    }
+
+                                    h1 {
+                                        color: #2b6cb0;
+                                        font-size: 22px;
+                                        margin-bottom: 12px;
+                                    }
+
+                                    p {
+                                        color: #444;
+                                        font-size: 15px;
+                                        line-height: 1.6;
+                                        margin: 0 auto 20px;
+                                        max-width: 400px;
+                                    }
+
+                                    .highlight {
+                                        color: #2b6cb0;
+                                        font-weight: bold;
+                                    }
+
+                                    .button {
+                                        display: inline-block;
+                                        background-color: #2b6cb0;
+                                        color: #ffffff !important;
+                                        text-decoration: none;
+                                        padding: 12px 24px;
+                                        border-radius: 6px;
+                                        font-weight: bold;
+                                        transition: background-color 0.3s ease;
+                                    }
+
+                                    .button:hover {
+                                        background-color: #1a4d8f;
+                                    }
+
+                                    .footer {
+                                        margin-top: 30px;
+                                        font-size: 13px;
+                                        color: #777;
+                                    }
+                                    </style>
+                                </head>
+                                <body>
+                                    <div class="wrapper">
+                                    <div class="container">
+                                        <img
+                                        src="https://a.slack-edge.com/bv1-13/slack_logo-ebd02d1.svg"
+                                        alt="Slack Logo"
+                                        class="logo"
+                                        />
+                                        <h1>Invitación al Workspace</h1>
+
+                                        <p>
+                                        El usuario <span class="highlight">${user.email}</span> te ha enviado una
+                                        invitación para unirte al espacio de trabajo
+                                        <strong>${workspace_data.nombre}</strong>.
+                                        </p>
+
+                                        <a
+                                        href="${ENVIRONMENT.URL_API_BACKEND}/api/workspace_member/confirm-invitation/${invite_token}"
+                                        class="button"
+                                        target="_blank"
+                                        >
+                                        Aceptar invitación
+                                        </a>
+
+                                        <div class="footer">
+                                        Si no esperabas esta invitación, podés ignorar este mensaje.
+                                        </div>
+                                    </div>
+                                    </div>
+                                </body>
+                                </html>
+
+                            `
                         }
                     )
-
+                }
                 }
 
             }
@@ -523,30 +617,6 @@ class memberWorkspaceController {
                     }
                 )
             }
-        }
-    }
-    static async inviteUserNewWorkspace(members, workspace_id_created, inviter_id) {
-
-        try {
-
-            console.log('EN EL POST INVITE: Nombre:'
-                , workspace_id_created, 'Invitador: ', inviter_id, 'Miembros:', members
-            )
-            for (const invited_email of members) {
-
-                const user = await userRepository.getByEmail(invited_email);
-
-                if (user) {
-                    this.inviteMember
-                }
-                else {
-                    inviteService(user, invited_email, workspace_id_created, inviter_id)
-                }
-
-            }
-
-        } catch (error) {
-            console.error("Error al enviar invitaciones:", error);
         }
     }
 }

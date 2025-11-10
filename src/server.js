@@ -7,6 +7,7 @@ import { engine } from 'express-handlebars'
 import workspacesRepository from './Repositories/workspaces.repository.js'
 import auth_router from './routes/auth.router.js'
 import cors from 'cors'
+import channels_route from './routes/channel.route.js'
 
 
 
@@ -64,5 +65,5 @@ app.use('/api/workspaces', workspace_router)
 app.use('/api/users',user_router) 
 app.use('/api/auth',auth_router) 
 app.use('/api/workspace_member',member_routes)
-
+app.use('/api/channels',channels_route)
 

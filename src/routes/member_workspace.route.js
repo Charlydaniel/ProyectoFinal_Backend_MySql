@@ -6,7 +6,7 @@ import workspacemidleware from '../midleware/workspaces.midlewares.js'
 const member_routes= Express.Router()
 
 member_routes.post('/:workspace_id/add_member',authMidleware,workspacemidleware(['admin']),memberWorkspaceController.create)
-member_routes.post('/:workspace_id/delete_member',authMidleware,workspacemidleware(['admin']),memberWorkspaceController.deleteMember)
+member_routes.post('/delete_member/:workspace_id',authMidleware,workspacemidleware(['admin']),memberWorkspaceController.deleteMember)
 member_routes.get('/:workspace_id/member_workspace',authMidleware,workspacemidleware([]),memberWorkspaceController.getMemberWorkspaceByUserIdAndWorkspaceId)
 member_routes.post('/invite/:workspace_id',authMidleware,workspacemidleware(['admin']),memberWorkspaceController.inviteMember)
 member_routes.get('/confirm-invitation/:verification_token',memberWorkspaceController.confirmInvitation)

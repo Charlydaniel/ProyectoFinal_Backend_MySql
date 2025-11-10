@@ -15,8 +15,6 @@ class workspaceController {
         const name = request.body.name
         const url_image = request.body.image
 
-
-        console.log(name , url_image )
         let msg = 'Nombre de Workspace invalido: '
         let ok = false
         let status = 201
@@ -64,7 +62,6 @@ class workspaceController {
                 }
                 status = 201
                 ok = true
-              
 
                 return response.status(status).json(
                     {
