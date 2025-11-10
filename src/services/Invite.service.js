@@ -6,9 +6,6 @@ import workspaceController from "../controllers/workspace.controller.js";
 
 export default async function inviteService(user,invited_email,workspace_id_created,id_inviter) {
 
-    console.log('EN EL SERVICE DE INVITE: invited_email:'
-        ,invited_email,'workspace: ',workspace_id_created,'id_inviter:', id_inviter
-    )
     
     const workspace= await workspaceController.getById(workspace_id_created)
     

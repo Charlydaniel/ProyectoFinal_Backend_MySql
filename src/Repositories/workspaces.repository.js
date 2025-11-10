@@ -22,7 +22,8 @@ class workspacesRepository {
 
         static async getAll() {
                 
-        const query=`SELECT * FROM ${WORKSPACE_TABLE.NAME}`
+        const query=`SELECT * FROM ${WORKSPACE_TABLE.NAME}
+                        WHERE ${WORKSPACE_TABLE.COLUMNS.ACTIVE}=1`
         const [result] =await pool.execute(query)
   
         return result
@@ -68,19 +69,17 @@ class workspacesRepository {
                 const [result]=await pool.execute(query,[name,url_image])
 
                 return result.insertId
-    
         }
-        static async updateBiId(workspace_id, new_values){
+        static async updateById(workspace_id, new_values) {
+        const query = `
+        UPDATE ${WORKSPACE_TABLE.NAME}
+        SET ${WORKSPACE_TABLE.COLUMNS.ACTIVE} = ?
+        WHERE ${WORKSPACE_TABLE.COLUMNS.ID} = ?
+        `;
 
-        const columns=Object.keys(new_values) 
-        const setClause= columns.map(col => `${col}=?`).join(', ')
-        const values=[... Object.values(new_values),workspace_id]
-        const query= `UPDATE ${WORKSPACE_TABLE.NAME}
-                        SET ${setClause}
-                        where ID= ?`
-        const [update_data,field_pack]= await pool.execute(query,values)
+        const [result] = await pool.execute(query, [0, workspace_id]);
 
-        return update_data.affectedRows
+        return result.affectedRows
         }
 
 }

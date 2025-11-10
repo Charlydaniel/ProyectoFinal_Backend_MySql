@@ -5,6 +5,7 @@ import workspacesRepository from "../Repositories/workspaces.repository.js"
 import MemberWokspaceRepository from "../Repositories/member_workspace.repository.js"
 import memberWorkspaceController from "./member_workspace.controller.js"
 import inviteService from "../services/Invite.service.js"
+import ChannelRepository from "../Repositories/channel.repository.js"
 
 
 
@@ -49,6 +50,7 @@ class workspaceController {
                 msg = ok_message
                 const workspace_id_created=await workspacesRepository.createWorkspace(name,url_image)
                 
+
                 if(!workspace_id_created){
                     throw new serverError(
                         500,
@@ -62,6 +64,12 @@ class workspaceController {
                 }
                 status = 201
                 ok = true
+
+                const channe_id_created = await ChannelRepository.create('general-'+name,false,workspace_id_created)
+
+                if(!member_workspace_id){
+                    throw new serverError(404,'Error al crear canal general para el workspace: ')
+                }
 
                 return response.status(status).json(
                     {
@@ -260,7 +268,7 @@ class workspaceController {
             if(!workspace_exist){
                 throw new serverError(404,'Usuario no encontrado')
             }
-            const workspace_updated=await workspacesRepository.updateBiId(workspace_id,new_values)
+            const workspace_updated=await workspacesRepository.updateById(workspace_id,new_values)
 
             return response.status(201).json(
                 {

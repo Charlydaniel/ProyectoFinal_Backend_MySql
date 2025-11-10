@@ -318,12 +318,12 @@ class memberWorkspaceController {
                                         />
                                         <h1>¡Bienvenido a Slack!</h1>
                                         <p>
-                                        El usuario <strong>${user.email}</strong> te ha invitado a formar parte del
-                                        espacio de trabajo en Slack.
+                                        El usuario <strong>${user.email}</strong> te ha invitado a formar parte
+                                        de Slack.
                                         </p>
 
                                         <a
-                                        href="${ENVIRONMENT.URL_API_BACKEND}/register"
+                                        href="${ENVIRONMENT.URL_FRONTEND}/api/auth/register"
                                         class="button"
                                         target="_blank"
                                         >
@@ -528,12 +528,13 @@ class memberWorkspaceController {
 
         try {
 
-            const { workspace_id } = request.body
+            
+            const  workspace_id  = request.body
 
             if (workspace_id) {
 
                 const members = await MemberWokspaceRepository.getMembersByWorkspaceId(workspace_id)
-
+                
                 return response.status(201).json(
 
                     {

@@ -97,11 +97,12 @@ class MemberWokspaceRepository {
 
         try{
                 const query=`
-                    SELECT ${WORKSPACE_TABLE.NAME}.* FROM ${WORKSPACE_TABLE.NAME} 
+                    SELECT ${WORKSPACE_TABLE.NAME}.* FROM ${WORKSPACE_TABLE.NAME}
                     LEFT JOIN ${MEMBERS_TABLE.NAME}  
                     ON ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=
                         ${WORKSPACE_TABLE.NAME}.${WORKSPACE_TABLE.COLUMNS.ID}
-                                WHERE ${MEMBERS_TABLE.COLUMNS.FK_USER}=?`
+                                WHERE ${MEMBERS_TABLE.COLUMNS.FK_USER}=?
+                                 AND ${WORKSPACE_TABLE.COLUMNS.ACTIVE}=1 `
                                 
                 const [result]  = await pool.execute(query,[member_id])
 
@@ -118,7 +119,7 @@ class MemberWokspaceRepository {
         try{
 
                 const query=`SELECT * FROM ${WORKSPACE_TABLE.NAME} 
-                    INNER JOIN  ${MEMBERS_TABLE.NAME}  
+                    INNER JOIN  ${MEMBERS_TABLE .NAME}  
                         ON ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=${WORKSPACE_TABLE.NAME}.${WORKSPACE_TABLE.COLUMNS.ID}
                     INNER JOIN ${USER_TABLE.NAME}
                         ON ${MEMBERS_TABLE.COLUMNS.FK_USER}=${USER_TABLE.NAME}.${USER_TABLE.COLUMNS.ID}
