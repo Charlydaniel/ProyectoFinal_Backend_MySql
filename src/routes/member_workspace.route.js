@@ -12,6 +12,7 @@ member_routes.post('/invite/:workspace_id',authMidleware,workspacemidleware(['ad
 member_routes.get('/confirm-invitation/:verification_token',memberWorkspaceController.confirmInvitation)
 member_routes.post('/get_by_workspaces/get_members',authMidleware,memberWorkspaceController.getMembersByWorkspaceId)
 member_routes.post('/get_by_member/get_workspaces',authMidleware,memberWorkspaceController.getWorkspacesByMemberId)
+member_routes.post('/getmembers_of_my_wp/',authMidleware,memberWorkspaceController.getMembersOfMiWorkspaces)
 
 export default member_routes
 

@@ -7,6 +7,7 @@ import inviteService from "../services/Invite.service.js"
 import serverError from "../utils/customError.utils.js"
 import jwt from 'jsonwebtoken'
 import workspaceController from "./workspace.controller.js"
+import { request } from "express"
 
 const USER_PROFILE = {
     admin: 'admin',
@@ -323,7 +324,7 @@ class memberWorkspaceController {
                                         </p>
 
                                         <a
-                                        href="${ENVIRONMENT.URL_FRONTEND}/api/auth/register"
+                                        href="${ENVIRONMENT.URL_FRONTEND}/register"
                                         class="button"
                                         target="_blank"
                                         >
@@ -620,6 +621,49 @@ class memberWorkspaceController {
             }
         }
     }
+    static async getMembersOfMiWorkspaces(request,response){
+
+    try{
+
+        const user = request.user
+
+        const user_id= user.id
+
+        if(isNaN(user_id) ){
+            throw new serverError(400,'ID de usuario incorrecto')
+        }
+
+        const members = await MemberWokspaceRepository.getMembersOfMiWorkspaces(user_id)
+
+            return response.status(201).json(
+                {
+                    ok:true,
+                    status:200,
+                    data:members,
+                    message:'Se envian miembros correctamente'
+                }
+            )
+        }
+        catch(error){
+            if(error.status){
+                return response.status(error.status).json(
+                    {
+                        ok:false,
+                        message:error.message
+                    }
+                )
+            }
+            else{
+                return response.status(500).json(
+                    {
+                        ok:false,
+                        message:'Error interno del servidor' +error
+                    }
+                )
+            }
+        }
+    }
+
 }
 
 export default memberWorkspaceController

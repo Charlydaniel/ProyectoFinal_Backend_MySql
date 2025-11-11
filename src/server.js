@@ -39,8 +39,6 @@ app.get('/status', (request, response) => {
 })
 
 
-//PROBAMOS HANDLEBAR:
-
 app.get('/test-handle',async (request,response)=>{
 
     const edad = 19
@@ -50,8 +48,6 @@ app.get('/test-handle',async (request,response)=>{
         {
             name:'Carlos',
             is_admin:true,
-            //Esto es porque en handlebar no podes hacer coniciones de >< =, 
-            // entonces las paso aca directamente
             es_mayor:edad >= 18,
             workspaces:workspaces   
         }

@@ -97,7 +97,7 @@ class MemberWokspaceRepository {
 
         try{
                 const query=`
-                    SELECT ${WORKSPACE_TABLE.NAME}.* FROM ${WORKSPACE_TABLE.NAME}
+                    SELECT * FROM ${WORKSPACE_TABLE.NAME}
                     LEFT JOIN ${MEMBERS_TABLE.NAME}  
                     ON ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=
                         ${WORKSPACE_TABLE.NAME}.${WORKSPACE_TABLE.COLUMNS.ID}
@@ -106,6 +106,7 @@ class MemberWokspaceRepository {
                                 
                 const [result]  = await pool.execute(query,[member_id])
 
+                console.log(query)
                 return result
         }
         catch(err){
@@ -136,6 +137,32 @@ class MemberWokspaceRepository {
 
 
 
+    }
+    static async getMembersOfMiWorkspaces(user_id){
+        
+        const query = `SELECT 
+                    w.id  AS workspace_id,
+                    w.nombre  AS workspace_nombre,
+                    u.id  AS usuario_id,
+                    u.username AS usuario_nombre,
+                    u.email AS usuario_mail,
+                    u.ultima_sesion AS usuario_ult_sesion,
+                    u.imagen_avatar AS imagen
+                    FROM miembros_workspace mw
+                    JOIN usuarios u 
+                    ON u.id = mw.fk_id_usuario
+                    JOIN workspaces w 
+                    ON w.id = mw.fk_id_workspace
+                    WHERE mw.fk_id_workspace IN (
+                    SELECT fk_id_workspace
+                    FROM miembros_workspace
+                    WHERE fk_id_usuario = ?
+                    )
+                    ORDER BY w.id, u.id        
+                    `
+            const [result] = await pool.execute(query,[user_id])
+            console.log(result)
+        return result
     }
 }
 export default MemberWokspaceRepository
