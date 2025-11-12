@@ -1,4 +1,6 @@
 import ChannelRepository from "../Repositories/channel.repository.js";
+import userRepository from "../Repositories/user.repository.js";
+import serverError from "../utils/customError.utils.js";
 
 
 class ChannelController {
@@ -9,13 +11,10 @@ class ChannelController {
             
         const {workspace_id}= request.params
 
-        console.log(workspace_id)
-
         const { name } = request.body
            
             if (!name || !workspace_id) {
             
-                console.log(name)
                 return response.status(400).json({
                     ok: false,
                     status: 400,
@@ -55,9 +54,6 @@ class ChannelController {
                 },
             });
         } catch (error) {
-
-            console.error("Error creating channel:", error);
-
             return response.status(500).json({
                 ok: false,
                 status: 500,
@@ -65,14 +61,17 @@ class ChannelController {
             });
         }
     }
-    static async getAllByWorkspace(request, response) {
+    static async getAllByWorkspaceAndEmail(request, response) {
         
         try {
-            const { workspace_id } = request.params
-            const user_id=request.body.user_id
 
+            const  {workspace_id}  = request.params
+            
+            const user_id=request.user.id
+
+ 
             const channels = await ChannelRepository.getByWorkspaceIdAndUserid(
-               user_id, workspace_id
+              user_id, workspace_id
             );
 
             return response.json({
@@ -80,18 +79,17 @@ class ChannelController {
                 status: 200,
                 message: "Lista de canales obtenida",
                 data: {
-                    channels: channels
+                channels: channels
                 }
             })
 
 
         }
         catch (error) {
-            console.error("Error al listar channels:", error);
             return response.status(500).json({
                 ok: false,
                 status: 500,
-                message: "Error interno del servidor al listar los canales",
+                message: "Error interno del servidor al listar los canales: "+ error,
             });
         }
     }

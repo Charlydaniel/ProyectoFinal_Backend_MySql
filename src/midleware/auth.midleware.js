@@ -7,18 +7,18 @@ export function authMidleware (request, response, next) {
 
     try {
         
-        const authorization_header = request.headers.authorization
+        const authorization_header = request.headers['authorization'];
 
         if (!authorization_header) {
             
-           throw new serverError(400, 'No hay header de autorizacion')
+           throw new serverError(400, 'No hay header de autorizacion midl')
         }
         else
             {
                 const auth_token = authorization_header.split(' ').pop()
 
                 if (!auth_token) {
-                    throw new serverError(400, 'No hay token de autorizacion')
+                    throw new serverError(400, 'No hay token de autorizacion Midl')
                 }
                 
                 const user_data= jwt.verify(auth_token,ENVIRONMENT.JWT_SECRET_KEY)

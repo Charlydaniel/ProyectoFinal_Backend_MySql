@@ -105,8 +105,7 @@ class MemberWokspaceRepository {
                                  AND ${WORKSPACE_TABLE.COLUMNS.ACTIVE}=1 `
                                 
                 const [result]  = await pool.execute(query,[member_id])
-
-                console.log(query)
+                
                 return result
         }
         catch(err){
@@ -161,7 +160,6 @@ class MemberWokspaceRepository {
                     ORDER BY w.id, u.id        
                     `
             const [result] = await pool.execute(query,[user_id])
-            console.log(result)
         return result
     }
 }

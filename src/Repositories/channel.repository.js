@@ -12,6 +12,17 @@ const CHANEL_TABLE={
 
     }
 }
+const MEMBER_CHANNEL_TABLE={
+    NAME:'miembros_canal',
+    COLUMNS:{
+        MEMBER_CHANNEL_ID:'id_canal_miembro',
+        CHANNEL_ID:'id_canal',
+        MEMBER_ID:'id_miembro',
+        CREATED_AT:'fecha_alta',
+        ACTIVE:'activo'
+    }
+}
+
 
 class ChannelRepository {
 
@@ -27,6 +38,19 @@ class ChannelRepository {
 
         const channel_created = await ChannelRepository.getById(result.insertId);
         return channel_created;
+    }
+
+    static async creatMemberChannel(id_canal, id_miembro) {
+        const query = `
+                    INSERT INTO ${MEMBER_CHANNEL_TABLE.name}(
+                    ${MEMBER_CHANNEL_TABLE.COLUMNS.ACTIVE}='1',
+                     ${MEMBER_CHANNEL_TABLE.COLUMNS.CHANNEL_ID}=?,
+                    ${MEMBER_CHANNEL_TABLE.COLUMNS.MEMBER_ID}=?) 
+                    VALUES(?, ?, ?)
+    `;
+        const [result] = await pool.execute(query, [id_canal, id_miembro]);
+
+        return result.insertId;
     }
 
     static async getAllByWorkspace(workspace_id) {
@@ -78,14 +102,18 @@ class ChannelRepository {
         }
         return channel_found;
     }
-       static async getByWorkspaceIdAndUserid(user_id, workspace_id) {
+    
+    static async getByWorkspaceIdAndUserid(user_id, workspace_id) {
 
     const query = `
       SELECT * FROM ${CHANEL_TABLE.NAME} WHERE
                     ${CHANEL_TABLE.COLUMNS.FK_WORKSPACE} = ?
-                    AND ${CHANEL_TABLE.COLUMNS.FK_WORKSPACE} = ?
-    `;
-        const [result] = await pool.execute(query, [channel_id, user_id]);
+                    AND ${CHANEL_TABLE.COLUMNS.ID} IN 
+        (SELECT ${MEMBER_CHANNEL_TABLE.COLUMNS.CHANNEL_ID} 
+                FROM ${MEMBER_CHANNEL_TABLE.NAME}
+                WHERE ${MEMBER_CHANNEL_TABLE.COLUMNS.MEMBER_ID}=?)
+    `
+        const [result] = await pool.execute(query, [workspace_id, user_id]);
         const channel_found = result[0];
 
         if (!channel_found) {
@@ -93,5 +121,7 @@ class ChannelRepository {
         }
         return channel_found;
     }
+    
+    
 }
 export default ChannelRepository

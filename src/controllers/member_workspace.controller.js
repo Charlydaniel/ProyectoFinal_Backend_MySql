@@ -29,12 +29,22 @@ class memberWorkspaceController {
             } = jwt.verify(token, ENVIRONMENT.JWT_SECRET_KEY)
 
 
-            const member_created = await MemberWokspaceRepository.create(id_invited, id_workspace, 'user')
+            const ismember= await MemberWokspaceRepository.getMemberWorkspaceByUserIdAndWorkspaceId(id_invited,id_workspace)
 
-            if (!member_created) {
-                throw new serverError(404, 'Error al crear miembro en el workspace')
+            if(ismember){
+                response.redirect(`${ENVIRONMENT.URL_FRONTEND}/login`)
             }
-            response.redirect(`${ENVIRONMENT.URL_FRONTEND}/login`)
+            else{
+            
+                const member_created = await MemberWokspaceRepository.create(id_invited, id_workspace, 'user')
+
+                if (!member_created) {
+                    throw new serverError(404, 'Error al crear miembro en el workspace')
+                }
+                response.redirect(`${ENVIRONMENT.URL_FRONTEND}/login`)
+            }
+
+
         }
         catch (error) {
 
@@ -350,7 +360,7 @@ class memberWorkspaceController {
                     user_invited.id, workspace_id
                     )
 
-                    const workspace_data = workspacesRepository.getById(workspace_id)
+                    const workspace_data = await workspacesRepository.getById(workspace_id)
 
                     if(!workspace_data){
                         throw new serverError(400,`Workspace no encontrado, no se puede enviar la invitación ${workspace_id}`)
@@ -466,7 +476,7 @@ class memberWorkspaceController {
                                         <p>
                                         El usuario <span class="highlight">${user.email}</span> te ha enviado una
                                         invitación para unirte al espacio de trabajo
-                                        <strong>${workspace_data.workspace_nombre}</strong>.
+                                        <strong>${workspace_data.nombre}</strong>.
                                         </p>
 
                                         <a
