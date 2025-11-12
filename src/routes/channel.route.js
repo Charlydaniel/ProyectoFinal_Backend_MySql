@@ -8,6 +8,7 @@ import ChannelController from '../controllers/channel.controller.js'
 const channels_route= Express.Router()
 
 channels_route.post('/create/:workspace_id',authMidleware,workspaceMidleware(['admin']),ChannelController.create)
+/channels_route.post('/get_channel/:workspace_id',authMidleware,workspaceMidleware(['admin','user']),ChannelController.getAllByWorkspace)
 
 export default channels_route
 

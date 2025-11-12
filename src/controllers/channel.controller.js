@@ -66,10 +66,13 @@ class ChannelController {
         }
     }
     static async getAllByWorkspace(request, response) {
+        
         try {
             const { workspace_id } = request.params
-            const channels = await ChannelRepository.getAllByWorkspace(
-                workspace_id
+            const user_id=request.body.user_id
+
+            const channels = await ChannelRepository.getByWorkspaceIdAndUserid(
+               user_id, workspace_id
             );
 
             return response.json({
