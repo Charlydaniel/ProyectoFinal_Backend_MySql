@@ -82,7 +82,7 @@ class ChannelRepository {
 
     const query = `
       SELECT * FROM ${CHANEL_TABLE.NAME} WHERE
-                    ${CHANEL_TABLE.COLUMNS.ID} = ?
+                    ${CHANEL_TABLE.COLUMNS.FK_WORKSPACE} = ?
                     AND ${CHANEL_TABLE.COLUMNS.FK_WORKSPACE} = ?
     `;
         const [result] = await pool.execute(query, [channel_id, user_id]);
