@@ -29,7 +29,7 @@ class AuthService {
         const from_email=ENVIRONMENT.GMAIL_USERNAME
 
         await transporter.sendMail({
-        from: to_email,
+        from: from_email,
         to: to_email,
         subject: 'Correo de verificación UTN validación de usuario',
         html: `

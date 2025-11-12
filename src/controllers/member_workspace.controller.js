@@ -352,7 +352,6 @@ class memberWorkspaceController {
 
                     const workspace_data = workspacesRepository.getById(workspace_id)
 
-
                     if(!workspace_data){
                         throw new serverError(400,`Workspace no encontrado, no se puede enviar la invitación ${workspace_id}`)
                     }
@@ -467,7 +466,7 @@ class memberWorkspaceController {
                                         <p>
                                         El usuario <span class="highlight">${user.email}</span> te ha enviado una
                                         invitación para unirte al espacio de trabajo
-                                        <strong>${workspace_data.nombre}</strong>.
+                                        <strong>${workspace_data.workspace_nombre}</strong>.
                                         </p>
 
                                         <a
