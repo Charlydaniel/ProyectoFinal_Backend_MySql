@@ -41,13 +41,15 @@ class ChannelRepository {
     }
 
     static async creatMemberChannel(id_canal, id_miembro) {
-        const query = `
-                    INSERT INTO ${MEMBER_CHANNEL_TABLE.name}(
-                    ${MEMBER_CHANNEL_TABLE.COLUMNS.ACTIVE}='1',
-                     ${MEMBER_CHANNEL_TABLE.COLUMNS.CHANNEL_ID}=?,
-                    ${MEMBER_CHANNEL_TABLE.COLUMNS.MEMBER_ID}=?) 
-                    VALUES(?, ?, ?)
-    `;
+
+        const query = `INSERT INTO ${MEMBER_CHANNEL_TABLE.NAME} 
+                    (
+                    ${MEMBER_CHANNEL_TABLE.COLUMNS.ACTIVE},
+                     ${MEMBER_CHANNEL_TABLE.COLUMNS.CHANNEL_ID},
+                    ${MEMBER_CHANNEL_TABLE.COLUMNS.MEMBER_ID}
+                    ) 
+                    VALUES(1, ?, ?)
+    `
         const [result] = await pool.execute(query, [id_canal, id_miembro]);
 
         return result.insertId;
@@ -114,11 +116,12 @@ class ChannelRepository {
                 WHERE ${MEMBER_CHANNEL_TABLE.COLUMNS.MEMBER_ID}=?)
     `
         const [result] = await pool.execute(query, [workspace_id, user_id]);
-        const channel_found = result[0];
+        const channel_found = result;
 
         if (!channel_found) {
             return null;
         }
+    
         return channel_found;
     }
     

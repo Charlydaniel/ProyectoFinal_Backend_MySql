@@ -73,14 +73,14 @@ class ChannelController {
             const channels = await ChannelRepository.getByWorkspaceIdAndUserid(
               user_id, workspace_id
             );
-
+         
+            
             return response.json({
                 ok: true,
                 status: 200,
                 message: "Lista de canales obtenida",
-                data: {
-                channels: channels
-                }
+                data:channels
+                
             })
 
 

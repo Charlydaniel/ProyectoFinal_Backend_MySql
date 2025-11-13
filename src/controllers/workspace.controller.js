@@ -50,7 +50,6 @@ class workspaceController {
                 msg = ok_message
                 const workspace_id_created=await workspacesRepository.createWorkspace(name,url_image)
                 
-                consolelo.ChannelRepository('WP CREADO: ', workspace_id_created)
 
                 if(!workspace_id_created){
                     throw new serverError( 500, 'Eror en la creación del workspace'
@@ -58,7 +57,7 @@ class workspaceController {
                 }
                 const member_workspace_id=await MemberWokspaceRepository.create(request.user.id,workspace_id_created,'admin')
                 
-                consolelo.ChannelRepository('MIEMBRO WP CREADO: ', member_workspace_id)
+          
 
                 if(!member_workspace_id){
                     throw new serverError(404,'Error al crear miembro')
@@ -66,15 +65,12 @@ class workspaceController {
 
                 const channe_id_created = await ChannelRepository.create('general-'+name,false,workspace_id_created)
 
-                consolelo.ChannelRepository('CANAL CREADO: ', member_workspace_id)
 
-                if(!member_workspace_id){
+                if(!channe_id_created){
                     throw new serverError(404,'Error al crear canal general para el workspace ')
                 }
 
-                const member_channel_created= await ChannelRepository.creatMemberChannel(channe_id_created.id,request.use.id)
-
-                consolelo.ChannelRepository('MIEMBRO CANAL CREADO: ', member_workspace_id)
+                const member_channel_created= await ChannelRepository.creatMemberChannel(channe_id_created.id,request.user.id)
 
                 if(!member_channel_created){
                     throw new serverError(404,'Error al crear miembro del canal general  ')
