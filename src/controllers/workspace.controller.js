@@ -170,7 +170,7 @@ class workspaceController {
                             ok: true,
                             message: `Workspace: ${workspace_id} encontrado`,
                             data: {
-                                workspace: workspace
+                            workspace: workspace
                             }
                         }
                     )
