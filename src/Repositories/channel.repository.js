@@ -81,10 +81,9 @@ class ChannelRepository {
                     WHERE ${CHANNEL_TABLE.COLUMNS.ID} = ? 
                     AND ${CHANNEL_TABLE.COLUMNS.ACTIVE} = 1`
 
-        const result = await pool.execute(query, [channel_id]);
+        const [result] = await pool.execute(query, [channel_id]);
 
         const channel_found = result[0];
-
         if (!channel_found) {
             return null;
         }
@@ -92,11 +91,11 @@ class ChannelRepository {
     }
     static async getByIdAndWorkspaceId(channel_id, workspace_id) {
 
-    const query = `
+        const query = `
       SELECT * FROM ${CHANNEL_TABLE.NAME} WHERE
                     ${CHANNEL_TABLE.COLUMNS.ID} = ?
                     AND ${CHANNEL_TABLE.COLUMNS.FK_WORKSPACE} = ?
-                    AND ${CHANNEL_TABLE.COLUMNS.ACTIVE}=0
+                    AND ${CHANNEL_TABLE.COLUMNS.ACTIVE} = 1
     `;
         const [result] = await pool.execute(query, [channel_id, workspace_id]);
         const channel_found = result[0];
