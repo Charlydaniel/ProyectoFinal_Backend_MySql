@@ -8,11 +8,16 @@ function  workspaceMidleware(valid_member_roles=[]){
 
     return async function(request,response,next) {
     
+      
         try{
 
             const {workspace_id} = request.params
             const workspace_found = await workspacesRepository.getById(workspace_id)
-            
+
+            if(isNaN(workspace_id)){
+                throw new serverError(415, 'Tipode datos incorrecto')
+            }
+
             if(!workspace_found){
                 throw new serverError(404,'Workspace no encontrado')
 
@@ -21,7 +26,6 @@ function  workspaceMidleware(valid_member_roles=[]){
             const member_user_data = await MemberWokspaceRepository.
             getMemberWorkspaceByUserIdAndWorkspaceId(user.id,workspace_id)
             
-          
             if(!member_user_data){
                 throw new serverError(403,'Usuario sin autorización')
             }
