@@ -50,7 +50,7 @@ class MemberWokspaceRepository {
                      join miembros_workspace  
                         on miembros_workspace.fk_id_workspace=workspaces.id
                         where miembros_workspace.fk_id_usuario=?`
-        const [result] =await  pool.execute(query,[user_id])
+        const [result] =await  pool.query(query,[user_id])
         return result
                 
     }
@@ -60,7 +60,7 @@ class MemberWokspaceRepository {
                     WHERE ${MEMBERS_TABLE.COLUMNS.FK_USER} = ?
                     AND ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE} = ?`
 
-        const [result] =await  pool.execute(query,[user_id,workspace_id])
+        const [result] =await  pool.query(query,[user_id,workspace_id])
         return result
     }
     static async getMemberWorkspaceByUserIdAndWorkspaceId(user_id, workspace_id) {
@@ -74,7 +74,7 @@ class MemberWokspaceRepository {
                         WHERE ${MEMBERS_TABLE.COLUMNS.FK_USER}=?
                         and ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=?`
 
-        const [result] =await  pool.execute(query,[user_id,workspace_id])
+        const [result] =await  pool.query(query,[user_id,workspace_id])
         return result[0]
     }
     static async create(user_id, workspace_id, role = 'user') {
@@ -88,7 +88,7 @@ class MemberWokspaceRepository {
                 VALUES (?,?,?)`
 
                 
-                const [result]=await pool.execute(query,[user_id,workspace_id,role])
+                const [result]=await pool.query(query,[user_id,workspace_id,role])
                 
                 return result.insertId
                 
@@ -104,7 +104,7 @@ class MemberWokspaceRepository {
                                 WHERE ${MEMBERS_TABLE.COLUMNS.FK_USER}=?
                                  AND ${WORKSPACE_TABLE.COLUMNS.ACTIVE}=1 `
                                 
-                const [result]  = await pool.execute(query,[member_id])
+                const [result]  = await pool.query(query,[member_id])
                 
                 return result
         }
@@ -125,7 +125,7 @@ class MemberWokspaceRepository {
                         ON ${MEMBERS_TABLE.COLUMNS.FK_USER}=${USER_TABLE.NAME}.${USER_TABLE.COLUMNS.ID}
                         WHERE ${MEMBERS_TABLE.COLUMNS.FK_WORKSPACE}=?`
 
-                const [result] =await pool.execute(query,[workspace_id])
+                const [result] =await pool.query(query,[workspace_id])
 
         
         return result
@@ -159,7 +159,7 @@ class MemberWokspaceRepository {
                     )
                     ORDER BY w.id, u.id        
                     `
-            const [result] = await pool.execute(query,[user_id])
+            const [result] = await pool.query(query,[user_id])
         return result
     }
 }

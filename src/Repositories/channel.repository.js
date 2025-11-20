@@ -35,7 +35,7 @@ class ChannelRepository {
                     ) 
                     VALUES(?, ?, ?)
     `;
-        const [result] = await pool.execute(query, [name, isPrivate, workspace_id]);
+        const [result] = await pool.query(query, [name, isPrivate, workspace_id]);
 
         const channel_created = await ChannelRepository.getById(result.insertId);
         return channel_created;
@@ -50,7 +50,7 @@ class ChannelRepository {
                     ) 
                     VALUES(1, ?, ?)
     `
-        const [result] = await pool.execute(query, [id_canal, id_miembro]);
+        const [result] = await pool.query(query, [id_canal, id_miembro]);
 
         return result.insertId;
     }
@@ -61,7 +61,7 @@ class ChannelRepository {
             WHERE ${CHANNEL_TABLE.COLUMNS.FK_WORKSPACE} = ? 
             AND ${CHANNEL_TABLE.COLUMNS.ACTIVE}=1`
 
-        const [result] = await pool.execute(query, [workspace_id])
+        const [result] = await pool.query(query, [workspace_id])
         return result
     }
     static async getAllByWorkspaceAndName(workspace_id, name) {
@@ -70,7 +70,7 @@ class ChannelRepository {
         WHERE ${CHANNEL_TABLE.COLUMNS.FK_WORKSPACE} = ? 
         AND ${CHANNEL_TABLE.COLUMNS.NAME} = ?
     `;
-        const [result] = await pool.execute(query, [workspace_id, name]);
+        const [result] = await pool.query(query, [workspace_id, name]);
         return result;
     }
     static async getById(channel_id) {
@@ -81,7 +81,7 @@ class ChannelRepository {
                     WHERE ${CHANNEL_TABLE.COLUMNS.ID} = ? 
                     AND ${CHANNEL_TABLE.COLUMNS.ACTIVE} = 1`
 
-        const [result] = await pool.execute(query, [channel_id]);
+        const [result] = await pool.query(query, [channel_id]);
 
         const channel_found = result[0];
         if (!channel_found) {
@@ -97,7 +97,7 @@ class ChannelRepository {
                     AND ${CHANNEL_TABLE.COLUMNS.FK_WORKSPACE} = ?
                     AND ${CHANNEL_TABLE.COLUMNS.ACTIVE} = 1
     `;
-        const [result] = await pool.execute(query, [channel_id, workspace_id]);
+        const [result] = await pool.query(query, [channel_id, workspace_id]);
         const channel_found = result[0];
 
         if (!channel_found) {
@@ -116,7 +116,7 @@ class ChannelRepository {
                 FROM ${MEMBER_CHANNEL_TABLE.NAME}
                 WHERE ${MEMBER_CHANNEL_TABLE.COLUMNS.MEMBER_ID}=?)
     `
-        const [result] = await pool.execute(query, [workspace_id, user_id]);
+        const [result] = await pool.query(query, [workspace_id, user_id]);
         const channel_found = result;
 
         if (!channel_found) {
@@ -134,11 +134,11 @@ class ChannelRepository {
                     WHERE ${CHANNEL_TABLE.COLUMNS.ID}=?`
 
         const values = [...Object.values(new_values), channel_id]
-        const [update_data, field_pack] = await pool.execute(query, values)
+        const [update_data, field_pack] = await pool.query(query, values)
 
         if (update_data.affectedRows === 0) return null
 
-        const [rows] = await pool.execute(`SELECT * FROM ${CHANNEL_TABLE.NAME} 
+        const [rows] = await pool.query(`SELECT * FROM ${CHANNEL_TABLE.NAME} 
                                             WHERE ${CHANNEL_TABLE.COLUMNS.ID}=?`, [channel_id]);
         return rows[0];
     }

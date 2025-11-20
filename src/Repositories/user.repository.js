@@ -33,7 +33,7 @@ class userRepository {
             
             const connection = await pool.getConnection();
                 try {
-                    const [insert_data,fieldPacket]= await pool.execute(query, [name, email, password])
+                    const [insert_data,fieldPacket]= await pool.query(query, [name, email, password])
                     const search_id=insert_data.insertId
                     const user_created=await userRepository.getById(search_id)
                     return user_created
@@ -48,7 +48,7 @@ class userRepository {
 
 
         const query=`SELECT * FROM ${USSER_TABLE.NAME}`
-        const [result,fieldPacket]=await pool.execute(query)
+        const [result,fieldPacket]=await pool.query(query)
         const user_found=result
 
         if(!user_found){
@@ -65,7 +65,7 @@ class userRepository {
     static async getById(user_id) {
         
         const query=`SELECT * FROM ${USSER_TABLE.NAME} WHERE ${USSER_TABLE.COLUMNS.ID} = ?`
-        const [result,fieldPacket]=await pool.execute(query,[user_id])
+        const [result,fieldPacket]=await pool.query(query,[user_id])
         const user_found=result[0]
         
 
@@ -84,11 +84,11 @@ class userRepository {
         const query=`UPDATE ${USSER_TABLE.NAME} SET ${SetClause}
                         WHERE ID=?`
         const values= [... Object.values(new_values),user_id]
-        const [update_data,field_pack] =await pool.execute(query,values)
+        const [update_data,field_pack] =await pool.query(query,values)
 
     if (update_data.affectedRows === 0) return null
 
-        const [rows] = await pool.execute(`SELECT * FROM ${USSER_TABLE.NAME} WHERE ID=?`, [user_id]);
+        const [rows] = await pool.query(`SELECT * FROM ${USSER_TABLE.NAME} WHERE ID=?`, [user_id]);
         
         return rows[0];
         
@@ -102,7 +102,7 @@ class userRepository {
     const connection = await pool.getConnection();
         
         try {
-                const [result] = await pool.execute(query, [email])
+                const [result] = await pool.query(query, [email])
                 return result[0]
         } finally {
         connection.release();

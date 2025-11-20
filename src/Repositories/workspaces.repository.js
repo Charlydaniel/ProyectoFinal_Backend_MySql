@@ -24,7 +24,7 @@ class workspacesRepository {
                 
         const query=`SELECT * FROM ${WORKSPACE_TABLE.NAME}
                         WHERE ${WORKSPACE_TABLE.COLUMNS.ACTIVE}=1`
-        const [result] =await pool.execute(query)
+        const [result] =await pool.query(query)
   
         return result
                 
@@ -35,7 +35,7 @@ class workspacesRepository {
                         WHERE ${WORKSPACE_TABLE.COLUMNS.ID} = ?
                         AND ACTIVO=1`
 
-        const [result] =await  pool.execute(query,[workspace_id])
+        const [result] =await  pool.query(query,[workspace_id])
         const workspace_found=result[0]
 
         return workspace_found
@@ -48,7 +48,7 @@ class workspacesRepository {
                         WHERE ${WORKSPACE_TABLE.COLUMNS.NAME} = ?
                         AND ${WORKSPACE_TABLE.COLUMNS.ACTIVE}=1`
 
-        const [result] =await  pool.execute(query,[name])
+        const [result] =await  pool.query(query,[name])
         const workspace_found=result[0]
 
         if (!workspace_found){
@@ -66,7 +66,7 @@ class workspacesRepository {
                                         ) 
                                 VALUES (?,?)`
                 
-                const [result]=await pool.execute(query,[name,url_image])
+                const [result]=await pool.query(query,[name,url_image])
 
                 return result.insertId
         }
@@ -77,7 +77,7 @@ class workspacesRepository {
         WHERE ${WORKSPACE_TABLE.COLUMNS.ID} = ?
         `;
 
-        const [result] = await pool.execute(query, [0, workspace_id]);
+        const [result] = await pool.query(query, [0, workspace_id]);
 
         return result.affectedRows
         }
