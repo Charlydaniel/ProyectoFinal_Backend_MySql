@@ -480,7 +480,7 @@ class memberWorkspaceController {
                                         </p>
 
                                         <a
-                                        href="${ENVIRONMENT.URL_FRONTEND}/api/workspace_member/confirm-invitation/${invite_token}"
+                                        href="${ENVIRONMENT.URL_API_BACKEND}/api/workspace_member/confirm-invitation/${invite_token}"
                                         class="button"
                                         target="_blank"
                                         >
