@@ -14,9 +14,8 @@ export default async function channelMidleware(request,response,next){
             const channel_id = request.body.channel_id
             const workspace_id = request.params.workspace_id
 
-console.log(channel_id)
             const channel_found = await ChannelRepository.getById(channel_id)
-                         console.log(channel_found)
+            
             if(!channel_found){
                 throw new serverError(404,'Canal no encontrado')
             }

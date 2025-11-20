@@ -108,8 +108,9 @@ class ChannelRepository {
     static async getByWorkspaceIdAndUserid(user_id, workspace_id) {
 
         const query = `
-      SELECT * FROM ${CHANNEL_TABLE.NAME} WHERE
-                    ${CHANNEL_TABLE.COLUMNS.FK_WORKSPACE} = ?
+      SELECT * FROM ${CHANNEL_TABLE.NAME} 
+                    WHERE ${CHANNEL_TABLE.COLUMNS.FK_WORKSPACE} = ?
+                    AND ${CHANNEL_TABLE.COLUMNS.ACTIVE} = 1
                     AND ${CHANNEL_TABLE.COLUMNS.ID} IN 
         (SELECT ${MEMBER_CHANNEL_TABLE.COLUMNS.CHANNEL_ID} 
                 FROM ${MEMBER_CHANNEL_TABLE.NAME}
