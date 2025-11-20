@@ -14,7 +14,8 @@ if (!global._mysqlPool) {
     connectionLimit: 5,     
     queueLimit: 0,
     enableKeepAlive: true,
-    keepAliveInitialDelay: 0
+    keepAliveInitialDelay: 0,
+    connectTimeout:10000,
   });
 
 /* 
